@@ -5,7 +5,7 @@ import numpy as np
 hparams = tf.contrib.training.HParams(
     # Comma-separated list of cleaners to run on text prior to training and eval. For non-English
     # text, you may want to use "basic_cleaners" or "transliteration_cleaners".
-    cleaners='english_cleaners',
+    cleaners='basic_cleaners',
 
     # Hardware setup (TODO: multi-GPU parallel tacotron training)
     use_all_gpus=False,
@@ -30,7 +30,7 @@ hparams = tf.contrib.training.HParams(
     # Mel spectrogram
     fft_size=1024,
     hop_size=256,
-    sample_rate=22050,  # 22050 Hz (corresponding to ljspeech dataset)
+    sample_rate=16000,  # 22050 Hz (corresponding to ljspeech dataset)
     frame_shift_ms=None,
 
     # Mel and Linear spectrograms normalization/scaling and clipping

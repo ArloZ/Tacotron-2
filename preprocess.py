@@ -92,7 +92,7 @@ def main():
     parser.add_argument('--base_dir', default='')
     parser.add_argument('--hparams', default='',
                         help='Hyperparameter overrides as a comma-separated list of name=value pairs')
-    parser.add_argument('--dataset', default='LJSpeech-1.1')
+    parser.add_argument('--dataset', default='chinesedata')
     parser.add_argument('--language', default='en_US')
     parser.add_argument('--voice', default='female')
     parser.add_argument('--reader', default='mary_ann')
