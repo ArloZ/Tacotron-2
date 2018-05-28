@@ -173,8 +173,8 @@ def _mel_to_linear(mel_spectrogram, hparams):
 
 def _build_mel_basis(hparams):
     assert hparams.fmax <= hparams.sample_rate // 2
-    return librosa.filters.mel(hparams.sample_rate, hparams.fft_size, n_mels=hparams.num_mels,
-                               fmin=hparams.fmin, fmax=hparams.fmax)
+    return librosa.filters.mel(hparams.sample_rate, hparams.fft_size, n_mels=hparams.num_mels)
+    # fmin=hparams.fmin, fmax=hparams.fmax)
 
 
 def _amp_to_db(x, hparams):
@@ -190,7 +190,7 @@ def _normalize(S, hparams):
     if hparams.allow_clipping_in_normalization:
         if hparams.symmetric_mels:
             return np.clip((2 * hparams.max_abs_value) * (
-                        (S - hparams.min_level_db) / (-hparams.min_level_db)) - hparams.max_abs_value,
+                    (S - hparams.min_level_db) / (-hparams.min_level_db)) - hparams.max_abs_value,
                            -hparams.max_abs_value, hparams.max_abs_value)
         else:
             return np.clip(hparams.max_abs_value * ((S - hparams.min_level_db) / (-hparams.min_level_db)), 0,
@@ -199,7 +199,7 @@ def _normalize(S, hparams):
     assert S.max() <= 0 and S.min() - hparams.min_level_db >= 0
     if hparams.symmetric_mels:
         return (2 * hparams.max_abs_value) * (
-                    (S - hparams.min_level_db) / (-hparams.min_level_db)) - hparams.max_abs_value
+                (S - hparams.min_level_db) / (-hparams.min_level_db)) - hparams.max_abs_value
     else:
         return hparams.max_abs_value * ((S - hparams.min_level_db) / (-hparams.min_level_db))
 
@@ -209,7 +209,7 @@ def _denormalize(D, hparams):
         if hparams.symmetric_mels:
             return (((np.clip(D, -hparams.max_abs_value,
                               hparams.max_abs_value) + hparams.max_abs_value) * -hparams.min_level_db / (
-                                 2 * hparams.max_abs_value))
+                             2 * hparams.max_abs_value))
                     + hparams.min_level_db)
         else:
             return ((np.clip(D, 0,
@@ -217,6 +217,6 @@ def _denormalize(D, hparams):
 
     if hparams.symmetric_mels:
         return (((D + hparams.max_abs_value) * -hparams.min_level_db / (
-                    2 * hparams.max_abs_value)) + hparams.min_level_db)
+                2 * hparams.max_abs_value)) + hparams.min_level_db)
     else:
         return ((D * -hparams.min_level_db / hparams.max_abs_value) + hparams.min_level_db)
