@@ -41,6 +41,7 @@ class ZoneoutLSTMCell(tf.nn.rnn_cell.RNNCell):
         self._zoneout_outputs = zoneout_factor_output
         self.is_training = is_training
         self.state_is_tuple = state_is_tuple
+        self._name = name
 
     @property
     def state_size(self):
@@ -54,7 +55,7 @@ class ZoneoutLSTMCell(tf.nn.rnn_cell.RNNCell):
         '''Runs vanilla LSTM Cell and applies zoneout.
         '''
         # Apply vanilla LSTM
-        output, new_state = self._cell(inputs, state, scope)
+        output, new_state = self._cell(inputs, state, self._name if scope is None else scope)
 
         if self.state_is_tuple:
             (prev_c, prev_h) = state
