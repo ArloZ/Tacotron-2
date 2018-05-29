@@ -42,7 +42,7 @@ hparams = tf.contrib.training.HParams(
     # Limits
     min_level_db=- 100,
     ref_level_db=20,
-    fmin=125,
+    fmin=50,
     # Set this to 75 if your speaker is male! if female, 125 should help taking off noise. (To test depending on dataset)
     fmax=7600,
 
@@ -52,14 +52,14 @@ hparams = tf.contrib.training.HParams(
     ###########################################################################################################################################
 
     # Tacotron
-    outputs_per_step=1,
+    outputs_per_step=2,
     # number of frames to generate at each decoding step (speeds up computation and allows for higher batch size)
     stop_at_any=True,
     # Determines whether the decoder should stop when predicting <stop> to any frame or to all of them
 
     embedding_dim=512,  # dimension of embedding space
 
-    enc_conv_num_layers=3,  # number of encoder convolutional layers
+    enc_conv_num_layers=5,  # number of encoder convolutional layers
     enc_conv_kernel_size=(5,),  # size of encoder convolution filters for each layer
     enc_conv_channels=512,  # number of encoder convolutions filters for each layer
     encoder_lstm_units=256,  # number of lstm units for each direction (forward and backward)
@@ -86,7 +86,7 @@ hparams = tf.contrib.training.HParams(
 
     cross_entropy_pos_weight=20,
     # Use class weights to reduce the stop token classes imbalance (by adding more penalty on False Negatives (FN)) (1 = disabled)
-    predict_linear=False,
+    predict_linear=True,
     # Whether to add a post-processing network to the Tacotron to predict linear spectrograms (True mode Not tested!!)
     ###########################################################################################################################################
 
@@ -131,7 +131,7 @@ hparams = tf.contrib.training.HParams(
     tacotron_swap_with_cpu=False,
     # Whether to use cpu as support to gpu for decoder computation (Not recommended: may cause major slowdowns! Only use when critical!)
 
-    tacotron_batch_size=32,  # number of training samples on each training steps
+    tacotron_batch_size=16,  # number of training samples on each training steps
     tacotron_reg_weight=1e-6,  # regularization weight (for l2 regularization)
     tacotron_scale_regularization=False,
     # Whether to rescale regularization weight to adapt for outputs range (used when reg_weight is high and biasing the model)

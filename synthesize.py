@@ -39,7 +39,7 @@ def synthesize(args, hparams, taco_checkpoint, wave_checkpoint, sentences):
 def main():
     accepted_modes = ['eval', 'synthesis', 'live']
     parser = argparse.ArgumentParser()
-    parser.add_argument('--checkpoint', default='logs-Tacotron/pretrained/', help='Path to model checkpoint')
+    parser.add_argument('--checkpoint', default='pretrained/', help='Path to model checkpoint')
     parser.add_argument('--hparams', default='',
                         help='Hyperparameter overrides as a comma-separated list of name=value pairs')
     parser.add_argument('--name', help='Name of logging directory if the two models were trained together.')
