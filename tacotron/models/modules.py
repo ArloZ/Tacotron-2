@@ -34,11 +34,12 @@ class ZoneoutLSTMCell(tf.nn.rnn_cell.RNNCell):
 		if zm < 0. or zs > 1.:
 			raise ValueError('One/both provided Zoneout factors are not in [0, 1]')
 
-		self._cell = tf.nn.rnn_cell.LSTMCell(num_units, state_is_tuple=state_is_tuple, name=name)
+		self._cell = tf.nn.rnn_cell.LSTMCell(num_units, state_is_tuple=state_is_tuple)
 		self._zoneout_cell = zoneout_factor_cell
 		self._zoneout_outputs = zoneout_factor_output
 		self.is_training = is_training
 		self.state_is_tuple = state_is_tuple
+		self._name = name
 
 	@property
 	def state_size(self):
@@ -52,7 +53,7 @@ class ZoneoutLSTMCell(tf.nn.rnn_cell.RNNCell):
 		'''Runs vanilla LSTM Cell and applies zoneout.
 		'''
 		#Apply vanilla LSTM
-		output, new_state = self._cell(inputs, state, scope)
+		output, new_state = self._cell(inputs, state, self._name if scope is None else scope)
 
 		if self.state_is_tuple:
 			(prev_c, prev_h) = state

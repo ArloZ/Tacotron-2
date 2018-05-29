@@ -6,7 +6,7 @@ import numpy as np
 hparams = tf.contrib.training.HParams(
 	# Comma-separated list of cleaners to run on text prior to training and eval. For non-English
 	# text, you may want to use "basic_cleaners" or "transliteration_cleaners".
-	cleaners='english_cleaners',
+	cleaners='basic_cleaners',
 
 	#Hardware setup (TODO: multi-GPU parallel tacotron training)
 	use_all_gpus = False, #Whether to use all GPU resources. If True, total number of available gpus will override num_gpus.
@@ -30,9 +30,9 @@ hparams = tf.contrib.training.HParams(
 
 	#Mel spectrogram
 	n_fft = 2048, #Extra window size is filled with 0 paddings to match this parameter
-	hop_size = 275, #For 22050Hz, 275 ~= 12.5 ms
-	win_size = 1100, #For 22050Hz, 1100 ~= 50 ms (If None, win_size = n_fft)
-	sample_rate = 22050, #22050 Hz (corresponding to ljspeech dataset)
+	hop_size = 200, #For 22050Hz, 275 ~= 12.5 ms
+	win_size = 800, #For 22050Hz, 1100 ~= 50 ms (If None, win_size = n_fft)
+	sample_rate = 16000, #22050 Hz (corresponding to ljspeech dataset)
 	frame_shift_ms = None,
 
 	#M-AILABS (and other datasets) trim params
@@ -189,43 +189,49 @@ hparams = tf.contrib.training.HParams(
 
 	#Eval sentences (if no eval file was specified, these sentences are used for eval)
 	sentences = [
-	# From July 8, 2017 New York Times:
-	'Scientists at the CERN laboratory say they have discovered a new particle.',
-	'There\'s a way to measure the acute emotional intelligence that has never gone out of style.',
-	'President Trump met with other leaders at the Group of 20 conference.',
-	'The Senate\'s bill to repeal and replace the Affordable Care Act is now imperiled.',
-	# From Google's Tacotron example page:
-	'Generative adversarial network or variational auto-encoder.',
-	'Basilar membrane and otolaryngology are not auto-correlations.',
-	'He has read the whole thing.',
-	'He reads books.',
-	"Don't desert me here in the desert!",
-	'He thought it was time to present the present.',
-	'Thisss isrealy awhsome.',
-	'Punctuation sensitivity, is working.',
-	'Punctuation sensitivity is working.',
-	"The buses aren't the problem, they actually provide a solution.",
-	"The buses aren't the PROBLEM, they actually provide a SOLUTION.",
-	"The quick brown fox jumps over the lazy dog.",
-	"does the quick brown fox jump over the lazy dog?",
-	"Peter Piper picked a peck of pickled peppers. How many pickled peppers did Peter Piper pick?",
-	"She sells sea-shells on the sea-shore. The shells she sells are sea-shells I'm sure.",
-	"The blue lagoon is a nineteen eighty American romance adventure film.",
-	"Tajima Airport serves Toyooka.",
-	'Talib Kweli confirmed to AllHipHop that he will be releasing an album in the next year.',
-	#From Training data:
-	'the rest being provided with barrack beds, and in dimensions varying from thirty feet by fifteen to fifteen feet by ten.',
-	'in giltspur street compter, where he was first lodged.',
-	'a man named burnett came with his wife and took up his residence at whitchurch, hampshire, at no great distance from laverstock,',
-	'it appears that oswald had only one caller in response to all of his fpcc activities,',
-	'he relied on the absence of the strychnia.',
-	'scoggins thought it was lighter.',
-	'''would, it is probable, have eventually overcome the reluctance of some of the prisoners at least, 
-	and would have possessed so much moral dignity''',
-	'''Sequence to sequence models have enjoyed great success in a variety of tasks such as machine translation, speech recognition, and text summarization. 
-	This project covers a sequence to sequence model trained to predict a speech representation from an input sequence of characters. We show that 
-	the adopted architecture is able to perform this task with wild success.''',
-	'Thank you so much for your support!',
+	# # From July 8, 2017 New York Times:
+	# 'Scientists at the CERN laboratory say they have discovered a new particle.',
+	# 'There\'s a way to measure the acute emotional intelligence that has never gone out of style.',
+	# 'President Trump met with other leaders at the Group of 20 conference.',
+	# 'The Senate\'s bill to repeal and replace the Affordable Care Act is now imperiled.',
+	# # From Google's Tacotron example page:
+	# 'Generative adversarial network or variational auto-encoder.',
+	# 'Basilar membrane and otolaryngology are not auto-correlations.',
+	# 'He has read the whole thing.',
+	# 'He reads books.',
+	# "Don't desert me here in the desert!",
+	# 'He thought it was time to present the present.',
+	# 'Thisss isrealy awhsome.',
+	# 'Punctuation sensitivity, is working.',
+	# 'Punctuation sensitivity is working.',
+	# "The buses aren't the problem, they actually provide a solution.",
+	# "The buses aren't the PROBLEM, they actually provide a SOLUTION.",
+	# "The quick brown fox jumps over the lazy dog.",
+	# "does the quick brown fox jump over the lazy dog?",
+	# "Peter Piper picked a peck of pickled peppers. How many pickled peppers did Peter Piper pick?",
+	# "She sells sea-shells on the sea-shore. The shells she sells are sea-shells I'm sure.",
+	# "The blue lagoon is a nineteen eighty American romance adventure film.",
+	# "Tajima Airport serves Toyooka.",
+	# 'Talib Kweli confirmed to AllHipHop that he will be releasing an album in the next year.',
+	# #From Training data:
+	# 'the rest being provided with barrack beds, and in dimensions varying from thirty feet by fifteen to fifteen feet by ten.',
+	# 'in giltspur street compter, where he was first lodged.',
+	# 'a man named burnett came with his wife and took up his residence at whitchurch, hampshire, at no great distance from laverstock,',
+	# 'it appears that oswald had only one caller in response to all of his fpcc activities,',
+	# 'he relied on the absence of the strychnia.',
+	# 'scoggins thought it was lighter.',
+	# '''would, it is probable, have eventually overcome the reluctance of some of the prisoners at least,
+	# and would have possessed so much moral dignity''',
+	# '''Sequence to sequence models have enjoyed great success in a variety of tasks such as machine translation, speech recognition, and text summarization.
+	# This project covers a sequence to sequence model trained to predict a speech representation from an input sequence of characters. We show that
+	# the adopted architecture is able to perform this task with wild success.''',
+	# 'Thank you so much for your support!',
+	"yu2 jian4 jun1 wei4 mei3 ge4 you3 cai2 neng2 de ren2 ti2 gong1 ping2 tai2",
+	"ta1 shi4 yin1 pin2 ling3 yu4 de tao2 bao3 tian1 mao1 zai4 zhe4 ge4 ping2 tai2 shang4",
+	"mei3 ge4 nei4 rong2 sheng1 chan3 zhe3 dou1 ke3 yi3 hen3 fang1 bian4 de shi1 xian4 zi4 wo3 jia4 zhi2 geng4 duo1 de ren2 yong1 you3 wei1 chuang4 ye4 de ji1 hui4",
+	"zui4 jin4 xi3 ma3 la1 ya3 de bao4 guang1 lv4 you3 dian3 gao1 ren4 xing4 shai4 chu1 yi1 dian3 qi1 yi4 yuan2 de zhang4 hu4 yu2 e2 de jie2 tu2",
+	"liang3 ren2 qi4 zhi4 hun4 da1 you3 dian3 nan2 zhu3 wai4 nv3 zhu3 nei4 de yi4 si1",
+	"bu4 guo4 ta1 men zhi3 shi4 da1 dang4 bu2 shi4 chang2 jian4 de fu1 qi1 dang4 mo2 shi4 yong4 yu2 jian4 jun1 de hua4 lai2 shuo1 zhe4 ge4 mo2 shi4 ye3 bu4 chang2 jian4",
 	]
 
 	)
