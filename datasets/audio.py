@@ -81,7 +81,7 @@ def inv_linear_spectrogram(linear_spectrogram, hparams):
         y = processor.istft(D).astype(np.float32)
         return y
     else:
-        return _griffin_lim(S ** hparams.power)
+        return _griffin_lim(S ** hparams.power, hparams)
 
 
 def inv_mel_spectrogram(mel_spectrogram, hparams):
@@ -99,7 +99,7 @@ def inv_mel_spectrogram(mel_spectrogram, hparams):
         y = processor.istft(D).astype(np.float32)
         return y
     else:
-        return _griffin_lim(S ** hparams.power)
+        return _griffin_lim(S ** hparams.power, hparams)
 
 
 def _lws_processor(hparams):
