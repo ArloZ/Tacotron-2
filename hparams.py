@@ -140,7 +140,7 @@ hparams = tf.contrib.training.HParams(
 	tacotron_start_decay = 40000, #Step at which learning decay starts
 	tacotron_decay_steps = 25000, #Determines the learning rate decay slope (UNDER TEST)
 	tacotron_decay_rate = 0.4, #learning rate decay rate (UNDER TEST)
-	tacotron_initial_learning_rate = 1e-3, #starting learning rate
+	tacotron_initial_learning_rate = 5 * 1e-3, #starting learning rate
 	tacotron_final_learning_rate = 1e-5, #minimal learning rate
 
 	tacotron_adam_beta1 = 0.9, #AdamOptimizer beta1 parameter
