@@ -18,7 +18,7 @@ class Tacotron():
 
 		
 	def initialize(self, inputs, input_lengths, mel_targets=None, stop_token_targets=None, linear_targets=None, targets_lengths=None, gta=False,
-			global_step=None, is_training=False, is_evaluating=False):
+			global_step=None, is_training=False, is_evaluating=False, speaker_ids=None):
 		"""
 		Initializes the model for inference
 
@@ -61,14 +61,21 @@ class Tacotron():
 				'inputs_embedding', [len(symbols), hp.embedding_dim], dtype=tf.float32)
 			embedded_inputs = tf.nn.embedding_lookup(embedding_table, inputs)
 
+			speaker_embed = None
+			if hp.mult_speaker:
+				speaker_embed_table = tf.get_variable('speaker_embedding', [hp.num_speakers, hp.speaker_embedding_size], dtype=tf.float32)
+				# [batch_size, hp.speaker_embedding_size]
+				speaker_embed = tf.nn.embedding_lookup(speaker_embed_table, speaker_ids)
+
 
 			#Encoder Cell ==> [batch_size, encoder_steps, encoder_lstm_units]
 			encoder_cell = TacotronEncoderCell(
 				EncoderConvolutions(is_training, hparams=hp, scope='encoder_convolutions'),
 				EncoderRNN(is_training, size=hp.encoder_lstm_units,
-					zoneout=hp.tacotron_zoneout_rate, scope='encoder_LSTM'))
+					zoneout=hp.tacotron_zoneout_rate, scope='encoder_LSTM'),
+				ConcatLayer('encoder_concat_speaker'))
 
-			encoder_outputs = encoder_cell(embedded_inputs, input_lengths)
+			encoder_outputs = encoder_cell(embedded_inputs, input_lengths, speaker_embed)
 
 			#For shape visualization purpose
 			enc_conv_output_shape = encoder_cell.conv_output_shape

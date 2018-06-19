@@ -29,18 +29,19 @@ def build_from_path(hparams, input_dirs, mel_dir, linear_dir, wav_dir, n_jobs=12
 	futures = []
 	index = 1
 	for input_dir in input_dirs:
-		with open(os.path.join(input_dir, 'metadata.csv'), encoding='utf-8') as f:
+		with open(os.path.join(input_dir, 'metadata-with-speaker.csv'), encoding='utf-8') as f:
 			for line in f:
 				parts = line.strip().split('|')
 				wav_path = os.path.join(input_dir, 'wavs', '{}.wav'.format(parts[0]))
 				text = parts[2]
-				futures.append(executor.submit(partial(_process_utterance, mel_dir, linear_dir, wav_dir, index, wav_path, text, hparams)))
+				speaker_id = parts[3] if hparams.mult_speaker else -1
+				futures.append(executor.submit(partial(_process_utterance, mel_dir, linear_dir, wav_dir, index, wav_path, text, speaker_id, hparams)))
 				index += 1
 
 	return [future.result() for future in tqdm(futures) if future.result() is not None]
 
 
-def _process_utterance(mel_dir, linear_dir, wav_dir, index, wav_path, text, hparams):
+def _process_utterance(mel_dir, linear_dir, wav_dir, index, wav_path, text, speaker_id, hparams):
 	"""
 	Preprocesses a single utterance wav/text pair
 
@@ -138,4 +139,4 @@ def _process_utterance(mel_dir, linear_dir, wav_dir, index, wav_path, text, hpar
 	np.save(os.path.join(linear_dir, linear_filename), linear_spectrogram.T, allow_pickle=False)
 
 	# Return a tuple describing this training example
-	return (audio_filename, mel_filename, linear_filename, time_steps, mel_frames, text)
+	return (audio_filename, mel_filename, linear_filename, time_steps, mel_frames, text, speaker_id)

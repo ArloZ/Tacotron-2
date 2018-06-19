@@ -24,7 +24,7 @@ class TacotronEncoderCell(RNNCell):
 	layer to predict the hidden representation vector (or memory)
 	"""
 
-	def __init__(self, convolutional_layers, lstm_layer):
+	def __init__(self, convolutional_layers, lstm_layer, concat_layer=None):
 		"""Initialize encoder parameters
 
 		Args:
@@ -35,15 +35,21 @@ class TacotronEncoderCell(RNNCell):
 		#Initialize encoder layers
 		self._convolutions = convolutional_layers
 		self._cell = lstm_layer
+		self._concat_layer = concat_layer
 
-	def __call__(self, inputs, input_lengths=None):
+	def __call__(self, inputs, input_lengths=None, speaker_embed=None):
 		#Pass input sequence through a stack of convolutional layers
 		conv_output = self._convolutions(inputs)
 
-		#Extract hidden representation from encoder lstm cells
-		hidden_representation = self._cell(conv_output, input_lengths)
 
-		#For shape visualization
+		concat_output = conv_output
+		if speaker_embed is not None and self._concat_layer is not None:
+			concat_output = self._concat_layer(conv_output, speaker_embed)
+
+		#Extract hidden representation from encoder lstm cells
+		hidden_representation = self._cell(concat_output, input_lengths)
+
+		# For shape visualization
 		self.conv_output_shape = conv_output.shape
 		return hidden_representation
 

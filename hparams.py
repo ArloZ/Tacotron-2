@@ -13,6 +13,11 @@ hparams = tf.contrib.training.HParams(
 	num_gpus = 1, #Determines the number of gpus in use
 	###########################################################################################################################################
 
+	# Mult Speaker
+	mult_speaker = True,
+	num_speakers = 64,
+	speaker_embedding_size = 32,
+
 	#Audio
 	num_mels = 80, #Number of mel-spectrogram channels and local conditioning dimensionality
 	num_freq = 513, # (= n_fft / 2 + 1) only used when adding linear spectrograms post processing network

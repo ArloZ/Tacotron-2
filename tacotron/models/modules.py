@@ -111,6 +111,25 @@ class EncoderConvolutions:
 		return x
 
 
+class ConcatLayer:
+	"""
+	concat datas
+	"""
+	def __init__(self, scope=None):
+		"""
+		Args:
+			scope: concat scope.
+		"""
+		super(ConcatLayer, self).__init__()
+		self._scope = scope
+
+	def __call__(self, x, y):
+		with tf.variable_scope(self._scope):
+			expand_y = tf.expand_dims(y, 1)
+			tiled_y = tf.tile(expand_y, [1, tf.shape(x)[1], 1])
+			return tf.concat([x, tiled_y], axis=-1)
+
+
 class EncoderRNN:
 	"""Encoder bidirectional one layer LSTM
 	"""
