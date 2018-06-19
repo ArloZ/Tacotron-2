@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 import tensorflow as tf 
 
 
-_batches_per_group = 32
+_batches_per_group = 4
 
 class Feeder:
 	"""
