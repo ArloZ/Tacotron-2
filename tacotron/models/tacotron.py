@@ -72,20 +72,21 @@ class Tacotron():
 			encoder_cell = TacotronEncoderCell(
 				EncoderConvolutions(is_training, hparams=hp, scope='encoder_convolutions'),
 				EncoderRNN(is_training, size=hp.encoder_lstm_units,
-					zoneout=hp.tacotron_zoneout_rate, scope='encoder_LSTM'),
-				ConcatLayer('encoder_concat_speaker'))
+					zoneout=hp.tacotron_zoneout_rate, scope='encoder_LSTM'))
 
-			encoder_outputs = encoder_cell(embedded_inputs, input_lengths, speaker_embed)
+			encoder_outputs = encoder_cell(embedded_inputs, input_lengths)
 
 			#For shape visualization purpose
 			enc_conv_output_shape = encoder_cell.conv_output_shape
 
 
+			attention_concat_cell = ConcatLayer('attention_concat_speaker')
+			encoder_concat_speaker_output = attention_concat_cell(encoder_outputs, speaker_embed)
 			#Decoder Parts
 			#Attention Decoder Prenet
 			prenet = Prenet(is_training, layers_sizes=hp.prenet_layers, drop_rate=hp.tacotron_dropout_rate, scope='decoder_prenet')
 			#Attention Mechanism
-			attention_mechanism = LocationSensitiveAttention(hp.attention_dim, encoder_outputs, hparams=hp,
+			attention_mechanism = LocationSensitiveAttention(hp.attention_dim, encoder_concat_speaker_output, hparams=hp,
 				mask_encoder=hp.mask_encoder, memory_sequence_length=input_lengths, smoothing=hp.smoothing, 
 				cumulate_weights=hp.cumulative_weights)
 			#Decoder LSTM Cells

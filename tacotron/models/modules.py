@@ -125,6 +125,8 @@ class ConcatLayer:
 
 	def __call__(self, x, y):
 		with tf.variable_scope(self._scope):
+			if y is None:
+				return x
 			expand_y = tf.expand_dims(y, 1)
 			tiled_y = tf.tile(expand_y, [1, tf.shape(x)[1], 1])
 			return tf.concat([x, tiled_y], axis=-1)
