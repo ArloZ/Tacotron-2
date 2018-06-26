@@ -52,6 +52,7 @@ def main():
 	parser.add_argument('--mode', default='eval', help='mode of run: can be one of {}'.format(accepted_modes))
 	parser.add_argument('--GTA', default='True', help='Ground truth aligned synthesis, defaults to True, only considered in synthesis mode')
 	parser.add_argument('--text_list', default='', help='Text file contains list of texts to be synthesized. Valid if mode=eval')
+	parser.add_argument('--speaker_id', default='', help='Specify the speaker id for synthesize')
 	args = parser.parse_args()
 	
 	accepted_models = ['Tacotron', 'WaveNet', 'Both', 'Tacotron-2']
@@ -76,6 +77,9 @@ def main():
 
 	taco_checkpoint, wave_checkpoint, hparams = prepare_run(args)
 	sentences = get_sentences(args)
+
+	if hparams.mult_speaker and args.speaker_id == '':
+		raise ValueError('Please enter a valid speaker id. %s' %args.speaker_id)
 
 	if args.model == 'Tacotron':
 		_ = tacotron_synthesize(args, hparams, taco_checkpoint, sentences)

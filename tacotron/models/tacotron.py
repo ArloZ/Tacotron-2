@@ -168,6 +168,8 @@ class Tacotron():
 				self.ratio = self.helper._ratio
 			self.inputs = inputs
 			self.input_lengths = input_lengths
+			if hp.mult_speaker:
+				self.speaker_ids = speaker_ids
 			self.decoder_output = decoder_output
 			self.alignments = alignments
 			self.stop_token_prediction = stop_token_prediction

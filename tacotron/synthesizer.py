@@ -18,13 +18,14 @@ class Synthesizer:
 		log('Constructing model: %s' % model_name)
 		inputs = tf.placeholder(tf.int32, [1, None], 'inputs')
 		input_lengths = tf.placeholder(tf.int32, [1], 'input_lengths')
+		speaker_id = tf.placeholder_with_default(tf.zeros([1], dtype=tf.int32), [1], 'speaker_id')
 		targets = tf.placeholder(tf.float32, [1, None, hparams.num_mels], 'mel_targets')
 		with tf.variable_scope('model') as scope:
 			self.model = create_model(model_name, hparams)
 			if gta:
-				self.model.initialize(inputs, input_lengths, targets, gta=gta)
+				self.model.initialize(inputs, input_lengths, targets, gta=gta,speaker_ids=speaker_id)
 			else:		
-				self.model.initialize(inputs, input_lengths)
+				self.model.initialize(inputs, input_lengths,speaker_ids=speaker_id)
 			self.mel_outputs = self.model.mel_outputs
 			self.linear_outputs = self.model.linear_outputs if hparams.predict_linear else None
 			self.alignment = self.model.alignments[0]
@@ -39,7 +40,7 @@ class Synthesizer:
 		saver.restore(self.session, checkpoint_path)
 
 
-	def synthesize(self, text, index, out_dir, log_dir, mel_filename):
+	def synthesize(self, text, index, out_dir, log_dir, mel_filename, speaker_id=None):
 		hparams = self._hparams
 		cleaner_names = [x.strip() for x in hparams.cleaners.split(',')]
 		seq = text_to_sequence(text, cleaner_names)
@@ -47,6 +48,9 @@ class Synthesizer:
 			self.model.inputs: [np.asarray(seq, dtype=np.int32)],
 			self.model.input_lengths: np.asarray([len(seq)], dtype=np.int32),
 		}
+
+		if speaker_id is not None:
+			feed_dict[self.model.speaker_ids] = np.asarray([speaker_id], dtype=np.int32)
 
 		if self.gta:
 			feed_dict[self.model.mel_targets] = np.load(mel_filename).reshape(1, -1, 80)
